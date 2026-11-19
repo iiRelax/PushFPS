@@ -12,7 +12,7 @@ public:
     ~ControllerInput(){stop();}
     bool start(uint32_t preferredDevice=0);
     void stop(); // also turns follow mode off
-    // 谁按键就用谁 (PS5 手柄控制): every pad is opened and the one whose button went
+    // 谁按键就用谁 (PS5 stream and PS5 手柄控制): every pad is opened and the one whose button went
     // down last is the one read, so a streaming tool's virtual pad that appears
     // after a local pad still works. Off (default): the first pad found.
     void setFollowLastPressed(bool on);

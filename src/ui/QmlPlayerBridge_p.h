@@ -519,16 +519,19 @@ struct QmlPlayerBridge::Impl {
     // source that just ended never cuts off the pad the next source started using.
     enum PadUser : unsigned { PadPs5 = 1, PadPs5Control = 2, PadMoonlight = 4, PadXbox = 8 };
     unsigned padUsers = 0;
+    // PS5 stream follows the last pressed pad too, so a keyboard-to-pad tool's virtual pad
+    // takes over from the DualSense on its first key press, and back.
+    static constexpr unsigned kFollowUsers = PadPs5 | PadPs5Control;
     bool acquirePad(unsigned user) {
         const bool ok = controller.start(); // no-op once initialized
         padUsers |= user;
-        controller.setFollowLastPressed((padUsers & PadPs5Control) != 0);
+        controller.setFollowLastPressed((padUsers & kFollowUsers) != 0);
         return ok;
     }
     void releasePad(unsigned user) {
         padUsers &= ~user;
         if (!padUsers) controller.stop();
-        else controller.setFollowLastPressed((padUsers & PadPs5Control) != 0);
+        else controller.setFollowLastPressed((padUsers & kFollowUsers) != 0);
     }
 #endif
     std::jthread ps5Worker;                  // last: joined before what it touches
