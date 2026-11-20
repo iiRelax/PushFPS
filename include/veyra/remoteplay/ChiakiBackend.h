@@ -42,6 +42,9 @@ struct NativeSnapshot {
     uint64_t transportErrors=0,assemblyErrors=0;
     bool automaticRetryAllowed=true;
     bool startupRetryAllowed=false; // Only transient RP_IN_USE, never an auth rejection.
+    // PushFPS: the console ended the session itself (REMOTE_SHUTDOWN). Final for a
+    // PS5 stream; PS5 手柄控制 retries it, because the capture card shows the console is still on.
+    bool remoteShutdown=false;
     int64_t serverTargetBitrate=-1; // Raw upstream field; diagnostic opt-in only.
     uint64_t qualityReports=0;
 };

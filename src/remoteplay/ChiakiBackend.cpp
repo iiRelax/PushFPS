@@ -299,6 +299,7 @@ NativeSnapshot ChiakiBackend::snapshot()const{
     // Retry RP_IN_USE within the same bounded budget; never force eviction.
     out.automaticRetryAllowed=out.lastQuitReason==CHIAKI_QUIT_REASON_NONE||out.lastQuitReason==CHIAKI_QUIT_REASON_CTRL_UNKNOWN||out.lastQuitReason==CHIAKI_QUIT_REASON_CTRL_CONNECT_FAILED||out.lastQuitReason==CHIAKI_QUIT_REASON_STREAM_CONNECTION_UNKNOWN||out.lastQuitReason==CHIAKI_QUIT_REASON_SESSION_REQUEST_RP_IN_USE;
     out.startupRetryAllowed=out.lastQuitReason==CHIAKI_QUIT_REASON_SESSION_REQUEST_RP_IN_USE;
+    out.remoteShutdown=out.lastQuitReason==CHIAKI_QUIT_REASON_STREAM_CONNECTION_REMOTE_SHUTDOWN;
     return out;
 }
 } // namespace veyra::remoteplay

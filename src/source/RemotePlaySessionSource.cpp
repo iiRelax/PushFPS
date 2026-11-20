@@ -83,7 +83,11 @@ void RemotePlaySessionSource::run(std::stop_token stop, RemotePlayConnectDesc de
                     std::lock_guard lock(mutex_);recovery_.active=false;recovery_.message.clear();
                 } else {
                     // Keyframe actions are ignored: there is no decoder to repair.
-                    const auto action=recovery.poll(milliseconds(),snapshot.state==remoteplay::SessionState::LoginPinRequired,snapshot.state==remoteplay::SessionState::Failed,native.automaticRetryAllowed,native.startupRetryAllowed);
+                    // PushFPS: a session the console shut down (quit reason 12) is retried here,
+                    // within the same three attempts. Field log 2026-11-20 (capture card, keyboard
+                    // pad): the PS5 ended the session twice while it stayed on and the capture kept
+                    // playing; nothing retried and the pad was dead until 重连, which connected in 2 s.
+                    const auto action=recovery.poll(milliseconds(),snapshot.state==remoteplay::SessionState::LoginPinRequired,snapshot.state==remoteplay::SessionState::Failed,native.automaticRetryAllowed||native.remoteShutdown,native.startupRetryAllowed);
                     if(action==remoteplay::StreamRecovery::Action::Reconnect){retryWasRpInUse=native.startupRetryAllowed;retry=true;break;}
                     if(action==remoteplay::StreamRecovery::Action::Fail){
                         log::error("remoteplay-recovery",std::format("controller-only recovery stopped attempts={} quitReason={} error={}",recovery.reconnects(),native.lastQuitReason,snapshot.errorCode));
